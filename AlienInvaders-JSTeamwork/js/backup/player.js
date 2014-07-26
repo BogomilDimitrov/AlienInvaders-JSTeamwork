@@ -73,7 +73,6 @@ Player = function(){
         if(this.jumping) {
             this.rect.y -= this.jumpVelocity;
             this.jumpVelocity -= 0.08;
-
         }else{
             this.rect.y += gravity;
         }
@@ -87,20 +86,18 @@ Player = function(){
 
         if(this.rect.x < 0) this.rect.x =0;
         if(this.rect.y < 0) this.rect.y =0;
-        if(this.rect.x > canvas.width + this.rect.width) this.rect.x = canvas.width - this.rect.width;
-        if(this.rect.y > canvas.height + this.rect.height) this.rect.y = canvas.height-this.rect.height;
+        if(this.rect.x + this.rect.width > canvas.width) this.rect.x = canvas.width - this.rect.width;
+        if(this.rect.y + this.rect.height> canvas.height) this.rect.y = canvas.height-this.rect.height;
     };
 
 
     this.Shoot = function(){
         if(!this.shotBullet) {
             var b = new Rectangle(this.rect.x + (this.rect.width / 2) - 4, this.rect.y + (this.rect.height / 2) - 4, 8, 8);
-            b.color.g = 0;
-            b.color.b = 0;
+            b.color = new Color(0,255,0,1);
 
             var vel = new Vector2(0,0);
-            if(this.lookingRight) vel.x = 3;
-            else vel.x = -3;
+            vel.y -= 3;
             var bul = new Bullet(vel,b);
             this.bullets.push(bul);
             this.shotBullet = true;

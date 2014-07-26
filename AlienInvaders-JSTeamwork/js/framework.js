@@ -316,6 +316,9 @@ Animation = function(width, height, row, column, limit, imgSrc, fps, columns, ro
 };
 //End of spreadsheet Animation
 
+/**
+ * Created by Bi0GaMe on 21.7.2014 г..
+ */
 //Start of input
 Input = function(){
     this.a = false;
@@ -362,8 +365,8 @@ var input = new Input();
 document.documentElement.onmousemove = function(e){
     e = e || window.event;
 
-    input.mousePosition.x = e.clientX - input.offset.x;
-    input.mousePosition.y = e.clientY - input.offset.y;
+    input.mousePosition.x = e.clientWidth - input.offset.x;
+    input.mousePosition.y = e.clientHeight - input.offset.y;
 };
 
 document.documentElement.onmousedown = function(e){
