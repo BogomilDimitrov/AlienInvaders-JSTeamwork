@@ -5,53 +5,43 @@ Bullet = function(vel, rectangle){
     this.velocity = vel;
     this.rect = rectangle;
 
+    if(count != 4)
+        this.animation = new Animation(7,15,0,0,1,"images/bullet.png",1,1,1);
+    else if(count == 4)
+        this.animation = new Animation(26,30,0,0,4,"images/bullet-ultimate.png",30,4,1);
+
     this.Update = function(){
+        this.animation.position.Set(this.rect.x, this.rect.y);
+        this.animation.Update();
         this.rect.x += this.velocity.x;
         this.rect.y += this.velocity.y;
     };
 
     this.Draw = function(){
-        this.rect.Draw(ctx);
+        this.animation.Draw(ctx);
     };
 };
 
 Player = function(){
-    this.rect = new Rectangle(20,450,16,16);
+    this.rect = new Rectangle(20,450,30,26);
     this.rect.color = new Color(0,0,255,1);
 
-    this.animation = new Animation(16,16,0,0,8,"images/mario.png",12,4,5);
+    this.animation = new Animation(30,26, 0, 0, 1,"images/ship.png",1,12,2);
 
-    var gravity = 2;
+    this.power = 1;
 
     this.bullets = [];
     this.shotBullet = false;
-    this.life = 5;
+    this.life = 10;
 
     this.moving = false;
 
-    this.SetPosition = function(x,y,mod){
-        if(mod==null || !mod) {
-            if (x != null)
-                this.rect.x = x;
-            if (y != null)
-                this.rect.y = y;
-        }else{
-            if(x!=null)this.rect.x += x;
-            if(y!=null)this.rect.y += y;
-        }
-    };
-
     this.Update = function(){
-        this.moving = false;
         if(input.a||input.left){
-            this.animation.SetRow(2);
-            this.animation.SetLimit(8);
             this.rect.x -=2;
             this.moving = true;
         }
         if(input.d||input.right){
-            this.animation.SetRow(0);
-            this.animation.SetLimit(8);
             this.rect.x +=2;
             this.moving = true;
         }
@@ -60,9 +50,7 @@ Player = function(){
 
         this.updateBullets();
         this.animation.position.Set(this.rect.x, this.rect.y);
-
-        if(this.moving) this.animation.Update();
-        else this.animation.SetColumn(0);
+        this.animation.Update();
 
         if(this.rect.x < 0) this.rect.x =0;
         if(this.rect.y < 0) this.rect.y =0;
@@ -73,14 +61,68 @@ Player = function(){
 
     this.Shoot = function(){
         if(!this.shotBullet) {
-            var b = new Rectangle(this.rect.x + (this.rect.width / 2) - 4, this.rect.y + (this.rect.height / 2) - 4, 8, 8);
-            b.color = new Color(0, 255, 0, 1);
+            switch (this.power){
+                case 1:
+                {
+                    var b = new Rectangle(this.rect.x + (this.rect.width / 2) - 4, this.rect.y + (this.rect.height / 2) - 4, 8, 8);
+                    b.color = new Color(0, 255, 0, 1);
+                    var vel = new Vector2(0, 0);
+                    vel.y -= 3;
+                    var bul = new Bullet(vel, b);
+                    this.bullets.push(bul);
+                    this.shotBullet = true;
+                    break;
+                }
+                case 2:
+                {
+                    b = new Rectangle(this.rect.x + (this.rect.width / 2) - 12, this.rect.y + (this.rect.height / 2) - 4, 8, 8);
+                    b.color = new Color(0, 255, 0, 1);
+                    var c = new Rectangle(this.rect.x + (this.rect.width / 2) + 6, this.rect.y + (this.rect.height / 2) - 4, 8, 8);
+                    c.color = new Color(0, 255, 0, 1);
 
-            var vel = new Vector2(0, 0);
-            vel.y -= 3;
-            var bul = new Bullet(vel, b);
-            this.bullets.push(bul);
-            this.shotBullet = true;
+                    vel = new Vector2(0, 0);
+                    vel.y -= 3;
+                    bul = new Bullet(vel, b);
+                    this.bullets.push(bul);
+                    bul = new Bullet(vel,c);
+                    this.bullets.push(bul);
+                    this.shotBullet = true;
+                    break;
+                }
+                case 3:
+                {
+                    b = new Rectangle(this.rect.x + (this.rect.width / 2) - 12, this.rect.y + (this.rect.height / 2) - 4, 8, 8);
+                    b.color = new Color(0, 255, 0, 1);
+                    c = new Rectangle(this.rect.x + (this.rect.width / 2) + 6, this.rect.y + (this.rect.height / 2) - 4, 8, 8);
+                    c.color = new Color(0, 255, 0, 1);
+                    var d = new Rectangle(this.rect.x + (this.rect.width / 2) -3, this.rect.y + (this.rect.height / 2) - 8, 8, 8);
+                    d.color = new Color(0, 255, 0, 1);
+
+                    vel = new Vector2(0, 0);
+                    vel.y -= 3;
+                    bul = new Bullet(vel, b);
+                    this.bullets.push(bul);
+                    bul = new Bullet(vel, c);
+                    this.bullets.push(bul);
+                    bul = new Bullet(vel, d);
+                    this.bullets.push(bul);
+                    this.shotBullet = true;
+                    break;
+                }
+                case 4:
+                {
+                    b = new Rectangle(this.rect.x + (this.rect.width / 2) -3, this.rect.y + (this.rect.height / 2) - 8, 36, 10);
+
+                    vel = new Vector2(0,0);
+                    vel.y -=3;
+                    bul = new Bullet(vel,b);
+                    this.bullets.push(bul);
+                    this.shotBullet = true;
+                    break;
+                }
+
+            }
+
         }
     };
 

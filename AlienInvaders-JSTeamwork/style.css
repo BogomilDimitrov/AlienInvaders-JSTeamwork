@@ -1,13 +1,37 @@
-*{
-    margin: 0;padding: 0;
+html{
+    background-image: url("images/html-back.jpg");
 }
 
-html,body{
+body{
     padding: 10px;
-    background-color: #FFF;
     overflow: hidden;
     height: 100%;
+    width: 100%;
+}
+div{
+    margin: auto;
+    width: 500px;
+    overflow: hidden;
+
 }
 canvas{
-    border: 1px solid #000000;
+    background-image: url("images/backg.jpg");
+    border-radius: 10px;
+}
+
+.info{
+    color: #FFFFFF;
+    font-family: 'Audiowide', cursive;
+    font-size: 20pt;
+}
+
+#lives{
+    float: left;
+    width: 50%;
+}
+
+#levels{
+    text-align: right;
+    float: right;
+    width: 50%;
 }

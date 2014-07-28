@@ -7,14 +7,18 @@ canvas.style.width  = canvas.width + "px";
 canvas.style.height = canvas.height + "px";
 input.offset = new Vector2(GetLeft(canvas), GetTop(canvas));
 
-var mario = new Player();
+var spaceship = new Player();
+var totalLevel = 1;
 var level = 1;
 var velocity = 0.5;
+var count = 1;
+var playerDamage = 1;
+var enemyDamage = 1;
 
-var temp = new Rectangle(0,0,2,500);
-temp.color = new Color(0,0,255,1);
-var temp2 = new Rectangle(498,0,2,500);
-temp2.color = new Color(0,0,255,1);
+//var temp = new Rectangle(0,0,2,500);
+//temp.color = new Color(0,0,255,1);
+//var temp2 = new Rectangle(498,0,2,500);
+//temp2.color = new Color(0,0,255,1);
 
 var enemies = new Enemy(level);
 
@@ -28,56 +32,70 @@ var enemies = new Enemy(level);
 
 var EnemyMove = setInterval(function() {
     for(var i = 0; i<enemies.ships.length;i++) {
-        if (enemies.ships[i].x < 0 ||
-            enemies.ships[i].x + enemies.ships[i].width > canvas.width) {
+        if (enemies.ships[i].rect.x < 0 ||
+            enemies.ships[i].rect.x + enemies.ships[i].rect.width > canvas.width) {
             velocity *= -1;
         }
-        enemies.ships[i].x += velocity;
+        enemies.ships[i].rect.x += velocity;
     }
 }, 5);
-
-
-
 var Update = setInterval(function() {
     ShowLog();
-    mario.Update();
+    spaceship.Update();
     enemies.Update();
 
     if(enemies.bullets.length !=0){
         for (var j2 = 0; j2 < enemies.bullets.length; j2++) {
-            if(enemies.bullets[j2].rect.Intersects(mario.rect))
+            if(enemies.bullets[j2].rect.Intersects(spaceship.rect))
             {
                 enemies.bullets.RemoveAt(j2);
-                mario.life--;
+                spaceship.life-=enemyDamage;
             }
         }
     }
 
-    if(mario.bullets.length !=0) {
-        for (var j = 0; j < mario.bullets.length; j++) {
+    if(spaceship.bullets.length !=0) {
+        for (var j = 0; j < spaceship.bullets.length; j++) {
             for (var k = 0; k < enemies.ships.length; k++) {
-                if (mario.bullets[j].rect.Intersects(enemies.ships[k])) {
-                    mario.bullets.RemoveAt(j);
-                    enemies.ships.RemoveAt(k);
+                if (spaceship.bullets[j].rect.Intersects(enemies.ships[k].rect)) {
+                    spaceship.bullets.RemoveAt(j);
+                    enemies.ships[k].life-=playerDamage;
+                    if(enemies.ships[k].life==0)
+                        enemies.ships.RemoveAt(k);
                 }
-                if (mario.bullets.length == 0) {
+                if (spaceship.bullets.length == 0) {
                     break;
                 }
             }
         }
     }
 
-    if(mario.life <= 0){
-        console.log("loose");
+    if(spaceship.life <= 0){
+        alert("loose");
         clearInterval(Update);
         clearInterval(EnemyMove);
     }
 
     if(enemies.ships.length == 0) {
-        alert("win");
-        mario.bullets.Clear();
-        enemies.bullets.Clear();
-        level++;
+        if(count != 4) {
+            alert("You killed all enemies! Press OK to continue!");
+            spaceship.bullets.Clear();
+            enemies.bullets.Clear();
+            level++;
+            totalLevel++;
+            if (level == 6) {
+                level = 1;
+                count++;
+                spaceship.power++;
+            }
+            if (spaceship.power == 4) playerDamage -= 5;
+        }else{
+            alert("Congratulations! You killed the BOSS!");
+            clearInterval(Update);
+            clearInterval(EnemyMove);
+        }
+
+
         enemies = new Enemy(level);
     }
 
@@ -87,12 +105,15 @@ var Draw = setInterval(function Draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     enemies.Draw(ctx);
-    mario.Draw(ctx);
-    temp.Draw(ctx);
-    temp2.Draw(ctx);
+    spaceship.Draw(ctx);
+//    temp.Draw(ctx);
+//    temp2.Draw(ctx);
 
 },33);
 
 function ShowLog(){
-    document.getElementById('log').value = mario.life;
+    document.getElementById('lives').innerHTML = "LIVES:&nbsp;&nbsp;"+spaceship.life;
+    document.getElementById('levels').innerHTML = "LEVEL:&nbsp;&nbsp;"+totalLevel;
+    if(count==4)
+        document.getElementById('levels').innerHTML = "LEVEL:&nbsp;&nbsp BOSS";
 }
