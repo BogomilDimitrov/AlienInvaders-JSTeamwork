@@ -1,12 +1,14 @@
 html{
     background-image: url("images/html-back.jpg");
+    background-size: 100%,100%;
 }
 
 body{
-    padding: 10px;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
     height: 100%;
-    width: 100%;
+    width: 99%;
 }
 div{
     margin: auto;

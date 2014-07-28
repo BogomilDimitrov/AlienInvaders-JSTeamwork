@@ -32,13 +32,16 @@ var enemies = new Enemy(level);
 
 var EnemyMove = setInterval(function() {
     for(var i = 0; i<enemies.ships.length;i++) {
-        if (enemies.ships[i].rect.x < 0 ||
-            enemies.ships[i].rect.x + enemies.ships[i].rect.width > canvas.width) {
-            velocity *= -1;
+        if (enemies.ships[i].rect.x < 0 ){
+            velocity = 0.5;
+        }
+        else if(enemies.ships[i].rect.x + enemies.ships[i].rect.width > canvas.width) {
+            velocity = -0.5;
         }
         enemies.ships[i].rect.x += velocity;
     }
 }, 5);
+
 var Update = setInterval(function() {
     ShowLog();
     spaceship.Update();
@@ -71,7 +74,7 @@ var Update = setInterval(function() {
     }
 
     if(spaceship.life <= 0){
-        alert("loose");
+        alert("You have been destroyed!");
         clearInterval(Update);
         clearInterval(EnemyMove);
     }
@@ -88,14 +91,13 @@ var Update = setInterval(function() {
                 count++;
                 spaceship.power++;
             }
-            if (spaceship.power == 4) playerDamage -= 5;
+            if (spaceship.power == 4) playerDamage += 5;
+
         }else{
             alert("Congratulations! You killed the BOSS!");
             clearInterval(Update);
             clearInterval(EnemyMove);
         }
-
-
         enemies = new Enemy(level);
     }
 
@@ -103,6 +105,7 @@ var Update = setInterval(function() {
 
 var Draw = setInterval(function Draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
 
     enemies.Draw(ctx);
     spaceship.Draw(ctx);

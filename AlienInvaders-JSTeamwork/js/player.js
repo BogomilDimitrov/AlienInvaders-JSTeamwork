@@ -23,10 +23,9 @@ Bullet = function(vel, rectangle){
 };
 
 Player = function(){
-    this.rect = new Rectangle(20,450,30,26);
-    this.rect.color = new Color(0,0,255,1);
+    this.rect = new Rectangle(20,450,30,24);
 
-    this.animation = new Animation(30,26, 0, 0, 1,"images/ship.png",1,12,2);
+    this.animation = new Animation(30,24, 0, 0, 1,"images/ship.png", 1, 1, 1);
 
     this.power = 1;
 
