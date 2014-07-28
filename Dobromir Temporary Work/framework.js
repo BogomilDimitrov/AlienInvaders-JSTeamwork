@@ -1,3 +1,30 @@
+function GetLeft (elm)
+{
+    var left = elm.offsetLeft;
+
+    while(elm=elm.offsetParent)
+        left += elm.offsetLeft;
+
+    left-=window.pageXOffset;
+
+    return left;
+}
+
+function GetTop(elm)
+{
+    var top = elm.offsetTop;
+
+    while(elm=elm.offsetParent)
+        top += elm.offsetTop;
+
+    top-=window.pageYOffset;
+
+    return top;
+}
+
+
+//-----------
+
 Array.prototype.Remove = function(arg,all)
 {
     for(var i = 0; i<this.length;i++)
@@ -203,7 +230,6 @@ Rectangle = function(x, y, w, h, color)
     this.width	= w;
     this.height	= h;
 
-    this.color = new Color(0,255,0,1);
 
     this.Intersects = function(shape)
     {
@@ -243,7 +269,7 @@ Rectangle = function(x, y, w, h, color)
 
 //------
 
-Animation = function (width, height, row, column, limit, imgSrc, fps, columns, rows)
+Animation = function (width, height, row, column, limit, imgSrc, fps, columns, rows, sizeX, sizeY)
 {
     if(fps==null||fps>=33)
         this.fps=1;
@@ -261,6 +287,8 @@ Animation = function (width, height, row, column, limit, imgSrc, fps, columns, r
     this.column=column;
     this.rows=rows;
     this.columns=columns;
+    this.sizeX=sizeX;
+    this.sizeY=sizeY;
 
     if(limit==null||limit==0)
         this.limit=99999999999;
@@ -338,7 +366,7 @@ Animation = function (width, height, row, column, limit, imgSrc, fps, columns, r
                 this.limitCount=0;
             }
         }
-        ctx.drawImage(this.image, this.cropPosition.x,this.cropPosition.y, this.width,this.height,this.position.x, this.position.y,this.width,this.height);
+        ctx.drawImage(this.image, this.cropPosition.x,this.cropPosition.y, this.width,this.height,this.position.x, this.position.y,this.sizeX,this.sizeY);
         this.fpsCounter++;
 
         if(this.fpsCounter>=this.fps)
