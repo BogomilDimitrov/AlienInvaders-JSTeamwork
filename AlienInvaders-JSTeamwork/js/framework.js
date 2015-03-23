@@ -123,7 +123,7 @@ var Vector2 = (function() {
      * @param x
      * @param y
      */
-    Vector2.prototype.setVector = function(x, y) {
+    Vector2.prototype.set = function(x, y) {
         if(!x && !y) {
             console.log("No x or y has been passed to Vector2's set function");
         } else {
@@ -180,7 +180,7 @@ var Vector2 = (function() {
      * @returns {boolean}
      */
     Vector2.prototype.hasChanged = function() {
-        return !!(this.x != this.previousX || this.x != this.previousY);
+        return !!(this.x != this.previousX || this.y != this.previousY);
     };
 
     /**
@@ -214,29 +214,10 @@ var Vector2 = (function() {
 
 var Color = (function(){
     function Color (r, g, b, a) {
-        if(r) {
-            this.r = r;
-        } else {
-            this.r = 255;
-        }
-
-        if(g) {
-            this.g = g;
-        } else {
-            this.g = 255;
-        }
-
-        if(b) {
-            this.b = b;
-        } else {
-            this.b = 255;
-        }
-
-        if(a) {
-            this.a = a;
-        } else {
-            this.a = 1;
-        }
+        this.g = g !== undefined ? g : 255;
+        this.r = r !== undefined ? r : 255;
+        this.b = b !== undefined ? b : 255;
+        this.a = a !== undefined ? a : 1;
     }
 
     /**
@@ -311,8 +292,8 @@ var Rectangle = (function() {
      * @param ctx
      */
     Rectangle.prototype.draw = function(ctx) {
-        ctx.fillStyle = this.color.ToStandard();
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.strokeStyle = this.color.toStandard();
+        ctx.strokeRect(this.x, this.y, this.width, this.height);
     };
 
     return Rectangle;
@@ -383,9 +364,9 @@ var Animation = (function() {
     /**
      * @constructor
      */
-    Animation.prototype.Update = function() {
-        this.cropPostion.x = this.width*this.column;
-        this.cropPostion.y = this.height*this.row;
+    Animation.prototype.update = function() {
+        this.cropPostion.x = this.width * this.column;
+        this.cropPostion.y = this.height * this.row;
 
         if(!this.columns)
             this.columns = this.image.width / this.width;
@@ -468,243 +449,240 @@ var Input = (function() {
         this.enter = false;
         this.space = false;
         this.mouseIsDown = false;
-        this.mousePosition = new Vector2(0);
-        this.offset = new Vector2(0);
-        this.clamp = new Vector2(0);
+        this.mousePosition = new Vector2();
+        this.offset = new Vector2();
+        this.clamp = new Vector2();
     }
 
     return Input;
 }());
 
-var input = new Input();
+function attachListeners(input) {
+    document.documentElement.onmousemove = function (e) {
+        e = e || window.event;
+        input.mousePosition.x = e.clientX;
+        input.mousePosition.y = e.clientY;
+    };
 
-document.documentElement.onMouseMove = function(e){
-    e = e || window.event;
+    document.documentElement.onmousedown = function (e) {
+        input.mouseIsDown = true;
+    };
 
-    input.mousePosition.x = e.clientWidth - input.offset.x;
-    input.mousePosition.y = e.clientHeight - input.offset.y;
-};
+    document.documentElement.onmouseup = function (e) {
+        input.mouseIsDown = false;
+    };
 
-document.documentElement.onMouseDown = function(e){
-    input.mouseIsDown = true;
-};
+    document.documentElement.onkeydown = function (e) {
+        var keycode;
+        if (window.event)
+            keycode = window.event.keyCode;
+        else if (e)
+            keycode = e.which;
 
-document.documentElement.onMouseUp = function(e){
-    input.mouseIsDown = false;
-};
+        switch (keycode) {
+            case 13:
+                input.enter = true;
+                break;
+            case 32:
+                input.space = true;
+                break;
+            case 37:
+                input.left = true;
+                break;
+            case 38:
+                input.up = true;
+                break;
+            case 39:
+                input.right = true;
+                break;
+            case 40:
+                input.down = true;
+                break;
+            case 65:
+                input.a = true;
+                break;
+            case 66:
+                input.b = true;
+                break;
+            case 67:
+                input.c = true;
+                break;
+            case 68:
+                input.d = true;
+                break;
+            case 69:
+                input.e = true;
+                break;
+            case 70:
+                input.f = true;
+                break;
+            case 71:
+                input.g = true;
+                break;
+            case 72:
+                input.h = true;
+                break;
+            case 73:
+                input.i = true;
+                break;
+            case 74:
+                input.j = true;
+                break;
+            case 75:
+                input.k = true;
+                break;
+            case 76:
+                input.l = true;
+                break;
+            case 77:
+                input.m = true;
+                break;
+            case 78:
+                input.n = true;
+                break;
+            case 79:
+                input.o = true;
+                break;
+            case 80:
+                input.p = true;
+                break;
+            case 81:
+                input.q = true;
+                break;
+            case 82:
+                input.r = true;
+                break;
+            case 83:
+                input.s = true;
+                break;
+            case 84:
+                input.t = true;
+                break;
+            case 85:
+                input.u = true;
+                break;
+            case 86:
+                input.v = true;
+                break;
+            case 87:
+                input.w = true;
+                break;
+            case 88:
+                input.x = true;
+                break;
+            case 89:
+                input.y = true;
+                break;
+            case 90:
+                input.z = true;
+                break;
+        }
+    };
 
-document.documentElement.onKeyDown = function(e){
-    var keycode;
-    if(window.event)
-        keycode = window.event.keyCode;
-    else if(e)
-        keycode = e.which;
+    document.documentElement.onkeyup = function (e) {
+        var keycode;
+        if (window.event)
+            keycode = window.event.keyCode;
+        else if (e)
+            keycode = e.which;
 
-    switch (keycode)
-    {
-        case 13:
-            input.enter = true;
-            break;
-        case 32:
-            input.space = true;
-            break;
-        case 37:
-            input.left = true;
-            break;
-        case 38:
-            input.up = true;
-            break;
-        case 39:
-            input.right = true;
-            break;
-        case 40:
-            input.down = true;
-            break;
-        case 65:
-            input.a = true;
-            break;
-        case 66:
-            input.b = true;
-            break;
-        case 67:
-            input.c = true;
-            break;
-        case 68:
-            input.d = true;
-            break;
-        case 69:
-            input.e = true;
-            break;
-        case 70:
-            input.f = true;
-            break;
-        case 71:
-            input.g = true;
-            break;
-        case 72:
-            input.h = true;
-            break;
-        case 73:
-            input.i = true;
-            break;
-        case 74:
-            input.j = true;
-            break;
-        case 75:
-            input.k = true;
-            break;
-        case 76:
-            input.l = true;
-            break;
-        case 77:
-            input.m = true;
-            break;
-        case 78:
-            input.n = true;
-            break;
-        case 79:
-            input.o = true;
-            break;
-        case 80:
-            input.p = true;
-            break;
-        case 81:
-            input.q = true;
-            break;
-        case 82:
-            input.r = true;
-            break;
-        case 83:
-            input.s = true;
-            break;
-        case 84:
-            input.t = true;
-            break;
-        case 85:
-            input.u = true;
-            break;
-        case 86:
-            input.v = true;
-            break;
-        case 87:
-            input.w = true;
-            break;
-        case 88:
-            input.x = true;
-            break;
-        case 89:
-            input.y = true;
-            break;
-        case 90:
-            input.z = true;
-            break;
-    }
-};
-
-document.documentElement.onKeyUp = function(e){
-    var keycode;
-    if(window.event)
-        keycode = window.event.keyCode;
-    else if(e)
-        keycode = e.which;
-
-    switch (keycode)
-    {
-        case 13:
-            input.enter = false;
-            break;
-        case 32:
-            input.space = false;
-            break;
-        case 37:
-            input.left = false;
-            break;
-        case 38:
-            input.up = false;
-            break;
-        case 39:
-            input.right = false;
-            break;
-        case 40:
-            input.down = false;
-            break;
-        case 65:
-            input.a = false;
-            break;
-        case 66:
-            input.b = false;
-            break;
-        case 67:
-            input.c = false;
-            break;
-        case 68:
-            input.d = false;
-            break;
-        case 69:
-            input.e = false;
-            break;
-        case 70:
-            input.f = false;
-            break;
-        case 71:
-            input.g = false;
-            break;
-        case 72:
-            input.h = false;
-            break;
-        case 73:
-            input.i = false;
-            break;
-        case 74:
-            input.j = false;
-            break;
-        case 75:
-            input.k = false;
-            break;
-        case 76:
-            input.l = false;
-            break;
-        case 77:
-            input.m = false;
-            break;
-        case 78:
-            input.n = false;
-            break;
-        case 79:
-            input.o = false;
-            break;
-        case 80:
-            input.p = false;
-            break;
-        case 81:
-            input.q = false;
-            break;
-        case 82:
-            input.r = false;
-            break;
-        case 83:
-            input.s = false;
-            break;
-        case 84:
-            input.t = false;
-            break;
-        case 85:
-            input.u = false;
-            break;
-        case 86:
-            input.v = false;
-            break;
-        case 87:
-            input.w = false;
-            break;
-        case 88:
-            input.x = false;
-            break;
-        case 89:
-            input.y = false;
-            break;
-        case 90:
-            input.z = false;
-            break;
-    }
-};
+        switch (keycode) {
+            case 13:
+                input.enter = false;
+                break;
+            case 32:
+                input.space = false;
+                break;
+            case 37:
+                input.left = false;
+                break;
+            case 38:
+                input.up = false;
+                break;
+            case 39:
+                input.right = false;
+                break;
+            case 40:
+                input.down = false;
+                break;
+            case 65:
+                input.a = false;
+                break;
+            case 66:
+                input.b = false;
+                break;
+            case 67:
+                input.c = false;
+                break;
+            case 68:
+                input.d = false;
+                break;
+            case 69:
+                input.e = false;
+                break;
+            case 70:
+                input.f = false;
+                break;
+            case 71:
+                input.g = false;
+                break;
+            case 72:
+                input.h = false;
+                break;
+            case 73:
+                input.i = false;
+                break;
+            case 74:
+                input.j = false;
+                break;
+            case 75:
+                input.k = false;
+                break;
+            case 76:
+                input.l = false;
+                break;
+            case 77:
+                input.m = false;
+                break;
+            case 78:
+                input.n = false;
+                break;
+            case 79:
+                input.o = false;
+                break;
+            case 80:
+                input.p = false;
+                break;
+            case 81:
+                input.q = false;
+                break;
+            case 82:
+                input.r = false;
+                break;
+            case 83:
+                input.s = false;
+                break;
+            case 84:
+                input.t = false;
+                break;
+            case 85:
+                input.u = false;
+                break;
+            case 86:
+                input.v = false;
+                break;
+            case 87:
+                input.w = false;
+                break;
+            case 88:
+                input.x = false;
+                break;
+            case 89:
+                input.y = false;
+                break;
+            case 90:
+                input.z = false;
+                break;
+        }
+    };
+}
